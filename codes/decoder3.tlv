@@ -1,11 +1,6 @@
-//slide : 12
-//https://myth1.makerchip.com/sandbox/02kfkhByV/0X6hXDD#
-
-
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // This code can be found in: https://github.com/stevehoover/RISC-V_MYTH_Workshop
-   
+  
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/fb7f86ff81ea48036bfc8da83be17f2ed3260949/tlv_lib/risc-v_shell_lib.tlv'])
 
 \SV

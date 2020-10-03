@@ -1,10 +1,5 @@
-//URL : https://myth1.makerchip.com/sandbox/02kfkhByV/0lOh2Ar
-//Slide: 21 (branches)
-
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // This code can be found in: https://github.com/stevehoover/RISC-V_MYTH_Workshop
-   
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/fb7f86ff81ea48036bfc8da83be17f2ed3260949/tlv_lib/risc-v_shell_lib.tlv'])
 
 \SV
@@ -64,65 +59,6 @@
                       $is_u_instr ? {$instr[31:12], 12'b0}:
                       $is_j_instr ? {{12{$instr[31]}}, $instr[19:12], $instr[20], $instr[30:21], 1'b0}:
                       32'b0;
-                      
-         // extraction of other instructions
-         //defining validity for each instruction
-         $funct7_valid = $is_r_instr;
-         $rs2_valid = $is_r_instr || $is_s_instr || $is_b_instr;
-         $rs1_valid = $is_r_instr || $is_i_instr || $is_s_instr || $is_b_instr;
-         $funct3_valid = $is_r_instr || $is_i_instr || $is_s_instr || $is_b_instr;
-         $rd_valid = $is_r_instr || $is_i_instr ||$is_u_instr || $is_j_instr;
-         ?$funct7_valid
-            $funct7[6:0] = $instr[31:25];
-         ?$rs2_valid
-            $rs2[4:0] = $instr[24:20];
-         ?$rs1_valid
-            $rs1[4:0] = $instr[19:15];
-         ?$funct3_valid   
-            $funct3[2:0] = $instr[14:12];
-         ?$rd_valid
-            $rd[4:0] = $instr[11:7];
-         $opcode[6:0] = $instr[6:0]; //opcode is for all instruction type
-         
-         //RV32I base instruction set
-         $dec_bits[10:0] = {$funct7[5], $funct3 ,$opcode};
-         $is_beq = $dec_bits ==? 11'bx_000_1100011;
-         $is_bne = $dec_bits ==? 11'bx_001_1100011;
-         $is_blt = $dec_bits ==? 11'bx_100_1100011;
-         $is_bge = $dec_bits ==? 11'bx_101_1100011;
-         $is_bltu = $dec_bits ==? 11'bx_110_1100011;
-         $is_bgeu = $dec_bits ==? 11'bx_111_1100011;
-         $is_addi = $dec_bits ==? 11'bx_000_0010011;
-         $is_add = $dec_bits ==? 11'b0_000_0110011;
-         
-         //Register read file
-         $rf_rd_en1 = $rs1_valid;
-         $rf_rd_en2 = $rs2_valid;
-         
-         $rf_rd_index1[4:0] = $rs1;
-         $rf_rd_index2[4:0] = $rs2;
-         
-         $src1_value[31:0] = $rf_rd_data1;
-         $src2_value[31:0] = $rf_rd_data2;
-         
-         //ALU
-         $result[31:0] = $is_addi ? $src1_value + $imm 
-                                  : $is_add ? $src1_value + $src2_value
-                                  : 31'bx;
-                                  
-         //register write file 
-         $rf_wr_en = $rd_valid && $rd != 5'b0;
-         
-         $rf_wr_index[4:0] = $rd;
-         $rf_wr_data[31:0] = $result;
-         
-         //branch instruction
-         $taken_br = ($is_beq && ($src1_value == $src2_value)) ||
-                     ($is_bne && ($src1_value != $src2_value)) ||
-                     ($is_blt && (($src1_value < $src2_Value) ^ ($src1_Value[31] != $src2_value[31]))) ||
-                     ($is_ge && (($src1_value >= $src2_value) ^ ($src1_Value[31] != $src2_value[31]))) ||
-                     ($is_bltu && ($src1_value < $src2_Value)) ||
-                     ($is_bgeu && ($src1_Value >= $src2_value)) ;
       // Note: Because of the magic we are using for visualisation, if visualisation is enabled below,
       //       be sure to avoid having unassigned signals (which you might be using for random inputs)
       //       other than those specifically expected in the labs. You'll get strange errors for these.
@@ -139,10 +75,10 @@
    //  o CPU visualization
    |cpu
       m4+imem(@1)    // Args: (read stage)
-      m4+rf(@1, @1)  // Args: (read stage, write stage) - if equal, no register bypass is required
+      //m4+rf(@1, @1)  // Args: (read stage, write stage) - if equal, no register bypass is required
       //m4+dmem(@4)    // Args: (read/write stage)
    
-  // m4+cpu_viz(@4)    // For visualisation, argument should be at least equal to the last stage of CPU logic
+   m4+cpu_viz(@4)    // For visualisation, argument should be at least equal to the last stage of CPU logic
                        // @4 would work for all labs
 \SV
    endmodule
